@@ -61,7 +61,7 @@ cd ../scripts
                  └─────────────────────┘
 ```
 
-### 5 Independent Services
+### Five Independent Services
 
 Each service runs in its own GlassFish domain with a unique service name for Dash0:
 
@@ -134,11 +134,11 @@ The project uses a **template-based configuration strategy** where secrets are k
 
 | File | In Git? | Contains Secrets? | Purpose |
 |------|---------|-------------------|---------|
-| `config.template.json` | ✅ Yes | ❌ No | Template with placeholders |
-| `config.json` | ❌ No | ⚠️ Yes | Actual credentials (local only) |
-| `otel.properties.template` | ✅ Yes | ❌ No | Template for OTel config |
-| `otel.properties` | ❌ No | ⚠️ Yes | Generated from config.json |
-| `generate-otel-properties.sh` | ✅ Yes | ❌ No | Generator script |
+| `config.template.json` | Yes | No | Template with placeholders |
+| `config.json` | No | Yes | Actual credentials (local only) |
+| `otel.properties.template` | Yes | No | Template for OTel config |
+| `otel.properties` | No | Yes | Generated from config.json |
+| `generate-otel-properties.sh` | Yes | No | Generator script |
 
 ### Configuration File Structure
 
@@ -700,13 +700,13 @@ jobs:
 
 ## Security Best Practices
 
-✅ **DO:**
+**DO:**
 - Store credentials in secure vaults (1Password, HashiCorp Vault, AWS Secrets Manager)
 - Use environment variables in CI/CD
 - Rotate tokens regularly
 - Use different datasets for dev/staging/production
 
-❌ **DON'T:**
+**DON'T:**
 - Commit `config.json` to git
 - Share credentials in Slack/email
 - Use production credentials in development
