@@ -1,0 +1,45 @@
+{
+  "paths": {
+    "projectRoot": "/absolute/path/to/your/project",
+    "glassfishBase": "/absolute/path/to/your/project/glassfish8",
+    "otelAgent": "/absolute/path/to/opentelemetry-javaagent.jar"
+  },
+  "dash0": {
+    "dataset": "YOUR_DATASET_NAME",
+    "endpoint": "https://ingress.YOUR_REGION.gcp.dash0.com:4317",
+    "protocol": "grpc",
+    "authorization": "Bearer YOUR_AUTH_TOKEN_HERE"
+  },
+  "services": [
+    {
+      "name": "api-gateway",
+      "domain": "gateway-domain",
+      "port": 8080,
+      "adminPort": 4848
+    },
+    {
+      "name": "order-service",
+      "domain": "order-domain",
+      "port": 8081,
+      "adminPort": 4849
+    },
+    {
+      "name": "inventory-service",
+      "domain": "inventory-domain",
+      "port": 8082,
+      "adminPort": 4850
+    },
+    {
+      "name": "payment-service",
+      "domain": "payment-domain",
+      "port": 8083,
+      "adminPort": 4851
+    },
+    {
+      "name": "notification-service",
+      "domain": "notification-domain",
+      "port": 8084,
+      "adminPort": 4852
+    }
+  ]
+}
