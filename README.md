@@ -5,7 +5,7 @@ A production-ready Jakarta EE application with 5 microservices, fully instrument
 ## Quick Start (5 minutes)
 
 ### 1. Copy configuration template
-- cd app/data
+- `cd app/data`
 - `cp config.template.json config.json`
 
 ### 2. Edit with your Dash0 credentials
@@ -17,23 +17,23 @@ Replace:
 - All paths in the "paths" section
 
 ### 3. Generate OpenTelemetry configs
-cd ../scripts
-./generate-otel-properties.sh
+- `cd ../scripts`
+ `./generate-otel-properties.sh`
 
 ### 4. Build all services
-./rebuild-all-services.sh
+`./rebuild-all-services.sh`
 
 ### 5. Start services
-./start-all-services.sh
+`./start-all-services.sh`
 
 ### 6. Verify telemetry
-./verify-telemetry.sh
+`./verify-telemetry.sh`
 
 ### 7. Test the setup
-./test-separate-services.sh
+`./test-separate-services.sh`
 
 ### 8. Generate traffic for Dash0
-./traffic-moderate.sh
+`./traffic-moderate.sh`
 
 **For detailed script documentation, see [app/scripts/README.md](app/scripts/README.md)**
 
