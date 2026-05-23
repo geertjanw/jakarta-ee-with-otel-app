@@ -18,7 +18,7 @@ Replace:
 
 ### 3. Generate OpenTelemetry configs
 - `cd ../scripts`
- `./generate-otel-properties.sh`
+- `./generate-otel-properties.sh`
 
 ### 4. Build all services
 `./rebuild-all-services.sh`
