@@ -5,8 +5,8 @@ A production-ready Jakarta EE application with 5 microservices, fully instrument
 ## Quick Start (5 minutes)
 
 ### 1. Copy configuration template
-cd app/data
-`cp config.template.json config.json`
+- cd app/data
+- `cp config.template.json config.json`
 
 ### 2. Edit with your Dash0 credentials
 
