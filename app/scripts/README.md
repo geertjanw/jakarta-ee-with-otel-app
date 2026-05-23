@@ -4,21 +4,19 @@ This folder contains shell scripts for managing and testing the GlassFish micros
 
 ## Quick Start
 
-```bash
 cd app/scripts
 
-# 1. Start all services
+### 1. Start all services
 ./start-all-services.sh
 
-# 2. Verify telemetry is flowing
+### 2. Verify telemetry is flowing
 ./verify-telemetry.sh
 
-# 3. Test the system
+### 3. Test the system
 ./test-separate-services.sh
 
-# 4. Generate traffic
+### 4. Generate traffic
 ./traffic-moderate.sh
-```
 
 ## Architecture Overview
 
