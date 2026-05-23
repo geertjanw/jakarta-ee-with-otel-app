@@ -103,7 +103,7 @@ Complete distributed trace in Dash0!
 
 ```bash
 curl http://localhost:8080/gateway/api/health
-curl http://localhost:8081/order/api/health      # No health endpoint
+curl http://localhost:8081/order/api/health
 curl http://localhost:8082/inventory/api/health
 curl http://localhost:8083/payment/api/health
 curl http://localhost:8084/notification/api/health
