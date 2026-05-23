@@ -9,12 +9,12 @@ cd app/data
 cp config.template.json config.json
 
 ### 2. Edit with your Dash0 credentials
-vim config.json
-# Replace:
-#   - YOUR_DATASET_NAME
-#   - YOUR_REGION
-#   - YOUR_AUTH_TOKEN_HERE
-#   - All paths in the "paths" section
+
+Replace:
+- YOUR_DATASET_NAME
+- YOUR_REGION
+- YOUR_AUTH_TOKEN_HERE
+- All paths in the "paths" section
 
 ### 3. Generate OpenTelemetry configs
 cd ../scripts
