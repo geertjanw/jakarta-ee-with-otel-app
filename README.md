@@ -2,9 +2,8 @@
 
 A production-ready Jakarta EE application with 5 microservices, fully instrumented with OpenTelemetry for distributed tracing in Dash0.
 
-## 🚀 Quick Start (5 minutes)
+## Quick Start (5 minutes)
 
-```bash
 # 1. Copy configuration template
 cd app/data
 cp config.template.json config.json
@@ -35,9 +34,8 @@ cd ../scripts
 
 # 8. Generate traffic for Dash0
 ./traffic-moderate.sh
-```
 
-📖 **For detailed script documentation, see [app/scripts/README.md](app/scripts/README.md)**
+**For detailed script documentation, see [app/scripts/README.md](app/scripts/README.md)**
 
 ---
 
