@@ -1,27 +1,39 @@
-# E-Commerce Microservices with Dash0 Observability
+# Jakarta EE with OpenTelemetry Application
 
-A production-ready Jakarta EE app application with 5 services, fully instrumented with OpenTelemetry for distributed tracing in Dash0.
+A production-ready Jakarta EE application with 5 microservices, fully instrumented with OpenTelemetry for distributed tracing in Dash0.
 
-## Quick Start
+## 🚀 Quick Start (5 minutes)
 
 ```bash
-# 1. Build all services
-cd app
-for service in gateway order inventory payment notification; do
-    (cd $service && mvn clean package)
-done
+# 1. Copy configuration template
+cd app/data
+cp config.template.json config.json
 
-# 2. Start all 5 GlassFish domains
-cd scripts
+# 2. Edit with your Dash0 credentials
+vim config.json
+# Replace:
+#   - YOUR_DATASET_NAME
+#   - YOUR_REGION
+#   - YOUR_AUTH_TOKEN_HERE
+#   - All paths in the "paths" section
+
+# 3. Generate OpenTelemetry configs
+cd ../scripts
+./generate-otel-properties.sh
+
+# 4. Build all services
+./rebuild-all-services.sh
+
+# 5. Start services
 ./start-all-services.sh
 
-# 3. Verify telemetry is flowing
+# 6. Verify telemetry
 ./verify-telemetry.sh
 
-# 4. Test the setup
+# 7. Test the setup
 ./test-separate-services.sh
 
-# 5. Generate traffic for Dash0
+# 8. Generate traffic for Dash0
 ./traffic-moderate.sh
 ```
 
@@ -111,6 +123,115 @@ curl -X POST http://localhost:8080/gateway/api/orders \
     "customer": "test@example.com"
   }'
 ```
+
+---
+
+## Configuration Strategy
+
+### Overview
+
+The project uses a **template-based configuration strategy** where secrets are kept out of git while maintaining a clear setup process for new developers.
+
+### Files Summary
+
+| File | In Git? | Contains Secrets? | Purpose |
+|------|---------|-------------------|---------|
+| `config.template.json` | ✅ Yes | ❌ No | Template with placeholders |
+| `config.json` | ❌ No | ⚠️ Yes | Actual credentials (local only) |
+| `otel.properties.template` | ✅ Yes | ❌ No | Template for OTel config |
+| `otel.properties` | ❌ No | ⚠️ Yes | Generated from config.json |
+| `generate-otel-properties.sh` | ✅ Yes | ❌ No | Generator script |
+
+### Configuration File Structure
+
+```json
+{
+  "paths": {
+    "projectRoot": "/absolute/path/to/your/project",
+    "glassfishBase": "/absolute/path/to/glassfish8",
+    "otelAgent": "/absolute/path/to/opentelemetry-javaagent.jar"
+  },
+  "dash0": {
+    "dataset": "YOUR_DATASET_NAME",
+    "endpoint": "https://ingress.YOUR_REGION.gcp.dash0.com:4317",
+    "protocol": "grpc",
+    "authorization": "Bearer YOUR_AUTH_TOKEN_HERE"
+  },
+  "services": [...]
+}
+```
+
+### Path Configuration
+
+All user-specific and environment-specific paths are configured in `app/data/config.json`:
+
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `projectRoot` | Root directory of the project | `/Users/yourname/projects/jakarta-ee-with-otel-app` |
+| `glassfishBase` | GlassFish installation directory | `/Users/yourname/projects/jakarta-ee-with-otel-app/glassfish8` |
+| `otelAgent` | OpenTelemetry Java agent JAR | `/Users/yourname/projects/jakarta-ee-with-otel-app/opentelemetry-javaagent.jar` |
+
+### Workflow
+
+#### 1. Initial Setup (Once per developer)
+
+```bash
+# Clone repository
+git clone <repo>
+
+# Copy template and add credentials
+cd app/data
+cp config.template.json config.json
+vim config.json  # Add actual Dash0 credentials and paths
+
+# Generate property files
+cd ../scripts
+./generate-otel-properties.sh
+
+# Build and deploy
+./rebuild-all-services.sh
+./start-all-services.sh
+```
+
+#### 2. Daily Workflow - Change Dataset or Credentials
+
+```bash
+# Edit config (single source of truth)
+vim app/data/config.json
+
+# Regenerate properties
+cd app/scripts
+./generate-otel-properties.sh
+
+# Rebuild and deploy
+./rebuild-all-services.sh
+pkill -9 -f glassfish && ./start-all-services.sh
+```
+
+#### 3. Test Traffic
+
+```bash
+cd app/scripts
+
+# Moderate load (500 requests)
+./traffic-moderate.sh
+
+# Stress test (2000 requests)
+./traffic-stress.sh
+
+# Continuous (until Ctrl+C)
+./traffic-continuous.sh
+```
+
+### Security Model
+
+**What's Protected:**
+1. **Dash0 Authorization Token** - Never committed to git, stored only in local `config.json`
+2. **Dataset Names** - May contain environment info (dev/staging/prod), kept out of git for flexibility
+
+**What's in Git:**
+1. **Structure (Templates)** - Shows developers what to configure, no actual secrets
+2. **Generator Script** - Logic for creating config files, no hardcoded credentials
 
 ---
 
@@ -281,6 +402,17 @@ cd app
 
 ## Troubleshooting
 
+### "config.json not found" Error
+
+```bash
+❌ ERROR: config.json not found!
+
+First time setup required:
+  1. cd app/data
+  2. cp config.template.json config.json
+  3. Edit config.json with your Dash0 credentials and paths
+```
+
 ### Domains Won't Start
 
 Check logs:
@@ -347,12 +479,53 @@ lsof -i :8080
 kill -9 <PID>
 ```
 
+### Path Doesn't Exist
+
+If scripts fail with "No such file or directory":
+
+**Check your paths:**
+```bash
+# View current config
+cat app/data/config.json | grep -A 5 '"paths"'
+
+# Verify paths exist
+ls -ld /your/glassfishBase/path
+ls -f /your/otelAgent/path
+```
+
+**Fix config:**
+```bash
+vim app/data/config.json
+# Update paths to actual locations
+```
+
+**Note:** Always use absolute paths, not relative paths in `config.json`.
+
+### Secrets Accidentally Committed
+
+If config.json was committed:
+```bash
+# Remove from git, keep local
+git rm --cached app/data/config.json
+
+# Verify .gitignore blocks it
+git check-ignore -v app/data/config.json
+
+# Commit the removal
+git commit -m "Remove config.json from tracking"
+
+# IMPORTANT: Secret is still in git history!
+# For real credentials, consider:
+# - Revoking and rotating the token
+# - Using git-filter-repo to rewrite history
+```
+
 ---
 
 ## Project Structure
 
 ```
-dash0stuff2/
+jakarta-ee-with-otel-app/
 ├── README.md                      # This file
 ├── dash0                          # Dash0 CLI tool
 ├── opentelemetry-javaagent.jar   # OpenTelemetry agent
@@ -464,15 +637,96 @@ dash0stuff2/
 
 ---
 
+## Team Collaboration
+
+### For New Team Members
+
+**What's in git:**
+```
+app/data/config.template.json          ✓ Template with placeholders
+app/*/src/main/resources/*.template    ✓ Property templates
+app/scripts/generate-otel-properties.sh ✓ Generator script
+```
+
+**What's NOT in git (you create locally):**
+```
+app/data/config.json                   ✗ Your credentials
+app/*/src/main/resources/otel.properties ✗ Generated files
+```
+
+### Getting Credentials
+
+New team members need:
+1. **Dash0 account access**
+2. **Authorization token** (from Dash0 dashboard)
+3. **Dataset name** (from team documentation)
+
+Share these via secure channels (1Password, Vault, etc.), not in code.
+
+---
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+```yaml
+name: Build and Deploy
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Generate config from secrets
+        env:
+          DASH0_TOKEN: ${{ secrets.DASH0_TOKEN }}
+          DASH0_DATASET: ${{ secrets.DASH0_DATASET }}
+        run: |
+          # Create config.json from template
+          jq '.dash0.authorization = "Bearer '"$DASH0_TOKEN"'" | 
+              .dash0.dataset = "'"$DASH0_DATASET"'"' \
+            app/data/config.template.json > app/data/config.json
+      
+      - name: Generate OTel properties
+        run: cd app/scripts && ./generate-otel-properties.sh
+      
+      - name: Build services
+        run: cd app/scripts && ./rebuild-all-services.sh
+```
+
+---
+
+## Security Best Practices
+
+✅ **DO:**
+- Store credentials in secure vaults (1Password, HashiCorp Vault, AWS Secrets Manager)
+- Use environment variables in CI/CD
+- Rotate tokens regularly
+- Use different datasets for dev/staging/production
+
+❌ **DON'T:**
+- Commit `config.json` to git
+- Share credentials in Slack/email
+- Use production credentials in development
+- Check generated `otel.properties` files into git
+
+---
+
 ## Summary
 
-This app architecture demonstrates:
+This application architecture demonstrates:
 
 * **Distributed Tracing** - Complete trace context propagation across all 5 services  
 * **Service Dependency Mapping** - Visualize service relationships in Dash0  
 * **Automatic Instrumentation** - Zero code changes required  
 * **JVM & HTTP Metrics** - Real-time performance monitoring  
 * **Production-Ready** - Proper error handling, simulated failures  
+* **Secure Configuration** - Template-based secret management
+* **Portable Setup** - Configurable paths for any environment
 
 Perfect for demonstrating Dash0's distributed tracing and observability capabilities with Jakarta EE applications!
 
