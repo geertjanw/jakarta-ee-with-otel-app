@@ -6,14 +6,14 @@ A production-ready Jakarta EE application with 5 microservices, fully instrument
 
 ### 1. Copy configuration template
 cd app/data
-cp config.template.json config.json
+`cp config.template.json config.json`
 
 ### 2. Edit with your Dash0 credentials
 
 Replace:
-- YOUR_DATASET_NAME
-- YOUR_REGION
-- YOUR_AUTH_TOKEN_HERE
+- `YOUR_DATASET_NAME`
+- `YOUR_REGION`
+- `YOUR_AUTH_TOKEN_HERE`
 - All paths in the "paths" section
 
 ### 3. Generate OpenTelemetry configs
